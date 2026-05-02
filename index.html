@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Undercover / Mr. White</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Using a simple QR code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Screens will be injected here or toggled -->
+        
+        <!-- Setup Screen -->
+        <section id="setup-screen" class="screen active">
+            <h1>Undercover</h1>
+            <div class="setup-container">
+                <div class="input-group">
+                    <label>Players</label>
+                    <div id="player-list">
+                        <!-- Name inputs will be added here -->
+                    </div>
+                    <button id="add-player-btn" class="secondary-btn">+ Add Player</button>
+                </div>
+
+                <div class="config-group">
+                    <div class="config-item">
+                        <label>Undercover</label>
+                        <input type="number" id="undercover-count" value="1" min="1">
+                    </div>
+                    <div class="config-item">
+                        <label>Mr. White</label>
+                        <input type="number" id="mrwhite-count" value="1" min="0">
+                    </div>
+                </div>
+
+                <div class="word-group">
+                    <label>Words (Random or Custom)</label>
+                    <div class="flex-row">
+                        <input type="text" id="word-civilian" placeholder="Civilian Word (e.g. Apple)">
+                        <input type="text" id="word-undercover" placeholder="Undercover Word (e.g. Pear)">
+                    </div>
+                    <p class="hint">Leave blank for random word pairs.</p>
+                </div>
+
+                <button id="start-game-btn" class="primary-btn">Start Game</button>
+            </div>
+        </section>
+
+        <!-- Lobby / Share Screen -->
+        <section id="lobby-screen" class="screen">
+            <h2>Join the Game</h2>
+            <p>Scan the QR code or share the link with players.</p>
+            <div id="qrcode-container"></div>
+            <div class="link-display">
+                <input type="text" id="game-link" readonly>
+                <button id="copy-link-btn">Copy</button>
+            </div>
+            <button id="go-to-game-btn" class="primary-btn">All Joined? Start!</button>
+            <button id="back-to-setup-btn" class="text-btn">Back to Setup</button>
+        </section>
+
+        <!-- Join / Pick Name Screen (For clients) -->
+        <section id="join-screen" class="screen">
+            <h2>Who are you?</h2>
+            <div id="name-selection-list">
+                <!-- Names to click -->
+            </div>
+        </section>
+
+        <!-- Role Reveal Screen -->
+        <section id="reveal-screen" class="screen">
+            <h2 id="player-name-display">Hello, Player</h2>
+            <div class="card-container">
+                <div id="role-card" class="card hidden">
+                    <div class="card-back">Tap to see your secret</div>
+                    <div class="card-front">
+                        <p id="role-type"></p>
+                        <h3 id="secret-word">WORD</h3>
+                    </div>
+                </div>
+            </div>
+            <p class="hint">Don't let others see!</p>
+            <button id="confirm-reveal-btn" class="secondary-btn hidden">I've seen it</button>
+            <div id="host-controls" class="hidden">
+                <button id="open-game-board-btn" class="primary-btn">Open Game Board</button>
+            </div>
+        </section>
+
+        <!-- Game Board Screen (Master View) -->
+        <section id="game-board-screen" class="screen">
+            <h2>Game Board</h2>
+            <div id="player-status-list">
+                <!-- List of players with eliminate buttons -->
+            </div>
+            <div class="game-info">
+                <p>Civilians left: <span id="civ-left">0</span></p>
+                <p>Undercovers left: <span id="und-left">0</span></p>
+                <p>Mr. Whites left: <span id="whi-left">0</span></p>
+            </div>
+            <div class="game-controls">
+                <button id="reset-game-btn" class="danger-btn">New Game</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
