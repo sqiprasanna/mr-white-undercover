@@ -178,6 +178,27 @@ button {
     background: var(--card-bg);
     color: var(--text);
     border: 1px solid #334155;
+    padding: 20px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.name-btn.seen {
+    opacity: 0.5;
+    background: #1e293b;
+    border-color: var(--success);
+    color: var(--success);
+    cursor: not-allowed;
+}
+
+#name-selection-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+#name-selection-list .primary-btn {
+    grid-column: span 2;
 }
 
 /* Reveal Screen */

@@ -1,9 +1,42 @@
-// --- CONFIG & DATA ---
+// 200 Word Pairs for Undercover/Mr. White
 const WORD_PAIRS = [
-    ["Apple", "Pear"], ["Coffee", "Tea"], ["Cat", "Dog"],
-    ["Moon", "Sun"], ["Violin", "Cello"], ["Phone", "Tablet"],
-    ["Pizza", "Pasta"], ["Forest", "Jungle"], ["Bicycle", "Motorcycle"],
-    ["Doctor", "Nurse"], ["King", "Queen"], ["Ocean", "Sea"]
+    ["Apple", "Pear"], ["Coffee", "Tea"], ["Cat", "Dog"], ["Moon", "Sun"], ["Violin", "Cello"], ["Phone", "Tablet"],
+    ["Pizza", "Pasta"], ["Forest", "Jungle"], ["Bicycle", "Motorcycle"], ["Doctor", "Nurse"], ["King", "Queen"], ["Ocean", "Sea"],
+    ["Bread", "Toast"], ["Milk", "Cream"], ["Car", "Truck"], ["Shirt", "Jacket"], ["Shoes", "Socks"], ["Hat", "Cap"],
+    ["Pencil", "Pen"], ["Notebook", "Paper"], ["Chair", "Stool"], ["Table", "Desk"], ["Lamp", "Light"], ["Window", "Door"],
+    ["River", "Lake"], ["Mountain", "Hill"], ["Flower", "Bush"], ["Grass", "Leaf"], ["Rain", "Snow"], ["Wind", "Storm"],
+    ["Blue", "Cyan"], ["Red", "Orange"], ["Green", "Lime"], ["Yellow", "Gold"], ["Purple", "Violet"], ["Pink", "Rose"],
+    ["Square", "Rectangle"], ["Circle", "Oval"], ["Triangle", "Pyramid"], ["Star", "Diamond"], ["Line", "Curve"], ["Dot", "Point"],
+    ["Fast", "Quick"], ["Slow", "Leisurely"], ["Big", "Large"], ["Small", "Tiny"], ["Hot", "Warm"], ["Cold", "Chilly"],
+    ["Happy", "Joyful"], ["Sad", "Gloomy"], ["Angry", "Mad"], ["Scared", "Afraid"], ["Brave", "Courageous"], ["Funny", "Silly"],
+    ["Sweet", "Sugary"], ["Sour", "Tart"], ["Bitter", "Sharp"], ["Salty", "Briny"], ["Spicy", "Hot"], ["Plain", "Bland"],
+    ["Sword", "Knife"], ["Shield", "Armor"], ["Bow", "Arrow"], ["Gun", "Rifle"], ["Bomb", "Grenade"], ["Tank", "Jeep"],
+    ["Ship", "Boat"], ["Plane", "Helicopter"], ["Train", "Bus"], ["Subway", "Tram"], ["Rocket", "Shuttle"], ["UFO", "Satellite"],
+    ["Earth", "Mars"], ["Venus", "Jupiter"], ["Saturn", "Neptune"], ["Pluto", "Mercury"], ["Galaxy", "Nebula"], ["Comet", "Asteroid"],
+    ["Gold", "Silver"], ["Bronze", "Copper"], ["Iron", "Steel"], ["Diamond", "Ruby"], ["Emerald", "Sapphire"], ["Pearl", "Opal"],
+    ["Math", "Physics"], ["Science", "History"], ["Art", "Music"], ["English", "Spanish"], ["French", "German"], ["Latin", "Greek"],
+    ["Lion", "Tiger"], ["Bear", "Wolf"], ["Elephant", "Rhino"], ["Giraffe", "Zebra"], ["Monkey", "Gorilla"], ["Snake", "Lizard"],
+    ["Eagle", "Hawk"], ["Owl", "Falcon"], ["Parrot", "Pigeon"], ["Duck", "Goose"], ["Chicken", "Turkey"], ["Penguin", "Puffin"],
+    ["Shark", "Whale"], ["Dolphin", "Porpoise"], ["Octopus", "Squid"], ["Crab", "Lobster"], ["Fish", "Shrimp"], ["Turtle", "Frog"],
+    ["Ant", "Bee"], ["Spider", "Scorpion"], ["Butterfly", "Moth"], ["Fly", "Mosquito"], ["Beetle", "Cricket"], ["Worm", "Slug"],
+    ["Hammer", "Mallet"], ["Screwdriver", "Wrench"], ["Saw", "Drill"], ["Pliers", "Clamp"], ["Axe", "Hatchet"], ["Shovel", "Spade"],
+    ["Bed", "Couch"], ["Pillow", "Cushion"], ["Blanket", "Duvet"], ["Mirror", "Glass"], ["Rug", "Carpet"], ["Curtain", "Blind"],
+    ["Plate", "Bowl"], ["Cup", "Mug"], ["Fork", "Spoon"], ["Knife", "Blade"], ["Pot", "Pan"], ["Oven", "Stove"],
+    ["Soap", "Shampoo"], ["Towel", "Mat"], ["Brush", "Comb"], ["Razor", "Blade"], ["Cream", "Lotion"], ["Paste", "Gel"],
+    ["City", "Town"], ["Village", "Hamlet"], ["Road", "Street"], ["Bridge", "Tunnel"], ["Tower", "Building"], ["Park", "Garden"],
+    ["Clock", "Watch"], ["Calendar", "Planner"], ["Map", "Globe"], ["Compass", "Scale"], ["Thermometer", "Gauge"], ["Lens", "Glass"],
+    ["Camera", "Lens"], ["Video", "Film"], ["Photo", "Image"], ["Sound", "Noise"], ["Music", "Song"], ["Radio", "Podcast"],
+    ["Game", "Toy"], ["Card", "Board"], ["Ball", "Puck"], ["Racket", "Bat"], ["Ski", "Sled"], ["Bike", "Skate"],
+    ["School", "College"], ["Office", "Studio"], ["Store", "Shop"], ["Bank", "Vault"], ["Post", "Mail"], ["News", "Paper"],
+    ["God", "Angel"], ["Demon", "Ghost"], ["Magic", "Spell"], ["Witch", "Wizard"], ["Hero", "Villain"], ["Legend", "Myth"],
+    ["Life", "Death"], ["Health", "Sickness"], ["Love", "Hate"], ["Peace", "War"], ["Truth", "Lie"], ["Fact", "Fiction"],
+    ["Space", "Time"], ["Mind", "Soul"], ["Energy", "Power"], ["Heat", "Cold"], ["Dark", "Light"], ["Void", "Space"],
+    ["Summer", "Winter"], ["Spring", "Autumn"], ["Day", "Night"], ["Morning", "Evening"], ["Week", "Month"], ["Year", "Century"],
+    ["Human", "Person"], ["Male", "Female"], ["Boy", "Girl"], ["Man", "Woman"], ["Child", "Adult"], ["Baby", "Infant"],
+    ["Brain", "Heart"], ["Lung", "Liver"], ["Bone", "Muscle"], ["Skin", "Hair"], ["Eye", "Ear"], ["Nose", "Mouth"],
+    ["Wine", "Beer"], ["Juice", "Soda"], ["Water", "Ice"], ["Smoke", "Fire"], ["Ash", "Dust"], ["Mud", "Dirt"],
+    ["Soft", "Hard"], ["Smooth", "Rough"], ["Clean", "Dirty"], ["Dry", "Wet"], ["Open", "Closed"], ["Full", "Empty"],
+    ["Above", "Below"], ["Inside", "Outside"], ["Left", "Right"], ["Front", "Back"], ["Up", "Down"], ["Near", "Far"]
 ];
 
 // --- STATE MANAGEMENT ---
@@ -11,9 +44,10 @@ let gameState = {
     names: [],
     roles: {}, // name -> { type, word }
     alive: {}, // name -> boolean
+    seen: {},  // name -> boolean (tracks who has seen their word)
     config: { undercover: 1, mrwhite: 1 },
     seed: null,
-    isHost: false,
+    isHost: true, // For Pass & Play, we are always the host
     currentPlayer: null
 };
 
@@ -37,7 +71,6 @@ function generateSeed() {
     return Math.random().toString(36).substring(2, 9);
 }
 
-// Simple deterministic random based on seed
 function seededRandom(seed) {
     let x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -46,7 +79,6 @@ function seededRandom(seed) {
 function shuffle(array, seed) {
     let m = array.length, t, i;
     let s = 0;
-    // Simple hash for seed string
     for(let j=0; j<seed.length; j++) s += seed.charCodeAt(j);
     
     while (m) {
@@ -112,64 +144,70 @@ function startGame() {
 
     const seed = generateSeed();
     
-    // Create state object
-    const state = {
-        n: names,
-        c: [uCount, wCount],
-        w: words,
-        s: seed
-    };
-
-    // Encode state to URL
-    const jsonString = JSON.stringify(state);
-    const encodedState = btoa(unescape(encodeURIComponent(jsonString)));
-    const url = new URL(window.location.href);
-    url.searchParams.set('s', encodedState);
-    
-    gameState.isHost = true;
     gameState.names = names;
-    initFromState(state);
+    gameState.config = { undercover: uCount, mrwhite: wCount };
+    gameState.seed = seed;
     
-    // Show Lobby
-    document.getElementById('game-link').value = url.toString();
-    showScreen('lobby');
-    
-    // Generate QR
-    document.getElementById('qrcode-container').innerHTML = "";
-    new QRCode(document.getElementById('qrcode-container'), {
-        text: url.toString(),
-        width: 200,
-        height: 200
-    });
+    initRoles(words);
+    startPassAndPlay();
 }
 
-function initFromState(state) {
-    gameState.names = state.n;
-    gameState.config = { undercover: state.c[0], mrwhite: state.c[1] };
-    gameState.seed = state.s;
-    const words = state.w;
-
-    // Deterministic Role Assignment
+function initRoles(words) {
     const rolesPool = [];
     for (let i = 0; i < gameState.config.undercover; i++) rolesPool.push('undercover');
     for (let i = 0; i < gameState.config.mrwhite; i++) rolesPool.push('mrwhite');
     while (rolesPool.length < gameState.names.length) rolesPool.push('civilian');
 
-    // Shuffle pool using seed
     const shuffledPool = shuffle([...rolesPool], gameState.seed);
     
     gameState.roles = {};
     gameState.alive = {};
+    gameState.seen = {};
     gameState.names.forEach((name, i) => {
         const type = shuffledPool[i];
         let word = "";
         if (type === 'civilian') word = words[0];
         else if (type === 'undercover') word = words[1];
-        else word = "???"; // Mr. White has no word
+        else word = "???";
 
         gameState.roles[name] = { type, word };
         gameState.alive[name] = true;
+        gameState.seen[name] = false;
     });
+}
+
+function startPassAndPlay() {
+    showScreen('join');
+    updateNameSelectionList();
+}
+
+function updateNameSelectionList() {
+    const list = document.getElementById('name-selection-list');
+    list.innerHTML = "";
+    
+    gameState.names.forEach(name => {
+        const isSeen = gameState.seen[name];
+        const btn = document.createElement('button');
+        btn.className = `name-btn ${isSeen ? 'seen' : ''}`;
+        btn.innerHTML = `${name} ${isSeen ? '✅' : ''}`;
+        btn.disabled = isSeen;
+        btn.onclick = () => pickName(name);
+        list.appendChild(btn);
+    });
+
+    // Check if everyone has seen their roles
+    const everyoneSeen = gameState.names.every(n => gameState.seen[n]);
+    if (everyoneSeen) {
+        const startBoardBtn = document.createElement('button');
+        startBoardBtn.className = "primary-btn";
+        startBoardBtn.style.marginTop = "20px";
+        startBoardBtn.innerText = "Start Discussion";
+        startBoardBtn.onclick = () => {
+            showScreen('board');
+            updateBoard();
+        };
+        list.appendChild(startBoardBtn);
+    }
 }
 
 function pickName(name) {
@@ -180,6 +218,11 @@ function pickName(name) {
     document.getElementById('role-type').innerText = role.type.replace('mrwhite', 'Mr. White');
     document.getElementById('secret-word').innerText = role.type === 'mrwhite' ? "You have no word!" : role.word;
     
+    // Reset card state
+    const roleCard = document.getElementById('role-card');
+    roleCard.classList.remove('flipped');
+    document.getElementById('confirm-reveal-btn').classList.add('hidden');
+    
     showScreen('reveal');
 }
 
@@ -187,16 +230,14 @@ function pickName(name) {
 const roleCard = document.getElementById('role-card');
 roleCard.onclick = () => {
     roleCard.classList.toggle('flipped');
-    document.getElementById('confirm-reveal-btn').classList.remove('hidden');
+    if (roleCard.classList.contains('flipped')) {
+        document.getElementById('confirm-reveal-btn').classList.remove('hidden');
+    }
 };
 
 document.getElementById('confirm-reveal-btn').onclick = () => {
-    if (gameState.isHost) {
-        showScreen('board');
-        updateBoard();
-    } else {
-        alert("Wait for the host to start the discussion!");
-    }
+    gameState.seen[gameState.currentPlayer] = true;
+    startPassAndPlay(); // Go back to name selection
 };
 
 // --- GAME BOARD ---
@@ -219,7 +260,7 @@ function updateBoard() {
         const div = document.createElement('div');
         div.className = `status-row ${isAlive ? '' : 'dead'}`;
         div.innerHTML = `
-            <span>${name} ${!isAlive ? `(${role.type})` : ''}</span>
+            <span>${name} ${!isAlive ? `(${role.type === 'mrwhite' ? 'Mr. White' : role.type})` : ''}</span>
             ${isAlive ? `<button class="danger-btn eliminate-btn" data-name="${name}">Eliminate</button>` : ''}
         `;
         list.appendChild(div);
@@ -231,9 +272,9 @@ function updateBoard() {
 
     // Check Win Conditions
     if (unds === 0 && whites === 0) {
-        alert("Civilians Win!");
+        setTimeout(() => alert("Civilians Win!"), 100);
     } else if (civs <= unds + whites) {
-        alert("Undercovers / Mr. White Win!");
+        setTimeout(() => alert("Undercovers / Mr. White Win!"), 100);
     }
 }
 
@@ -247,66 +288,8 @@ document.addEventListener('click', e => {
     }
 });
 
-// --- URL HANDLING (JOINING) ---
-window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    const s = params.get('s');
-    
-    if (s) {
-        try {
-            const decodedState = decodeURIComponent(escape(atob(s)));
-            const state = JSON.parse(decodedState);
-            initFromState(state);
-            
-            // Check if player name is already in params (persistent join)
-            const pName = params.get('p');
-            if (pName && gameState.names.includes(pName)) {
-                pickName(pName);
-            } else {
-                // Show name selection
-                showScreen('join');
-                const list = document.getElementById('name-selection-list');
-                list.innerHTML = "";
-                gameState.names.forEach(name => {
-                    const btn = document.createElement('button');
-                    btn.className = "name-btn";
-                    btn.innerText = name;
-                    btn.onclick = () => {
-                        // Optional: update URL with player name so refresh doesn't lose it
-                        const url = new URL(window.location.href);
-                        url.searchParams.set('p', name);
-                        window.history.replaceState({}, '', url);
-                        pickName(name);
-                    };
-                    list.appendChild(btn);
-                });
-            }
-        } catch (e) {
-            console.error("Invalid game state in URL");
-            showScreen('setup');
-        }
-    }
-};
-
 // --- BUTTON BINDS ---
 document.getElementById('start-game-btn').onclick = startGame;
-document.getElementById('go-to-game-btn').onclick = () => {
-    // If Host wants to play too, they pick their name
-    showScreen('join');
-    // But since it's the host, we also want to show the board later
-    document.getElementById('host-controls').classList.remove('hidden');
-};
-document.getElementById('open-game-board-btn').onclick = () => {
-    showScreen('board');
-    updateBoard();
-};
-document.getElementById('back-to-setup-btn').onclick = () => showScreen('setup');
-document.getElementById('copy-link-btn').onclick = () => {
-    const input = document.getElementById('game-link');
-    input.select();
-    document.execCommand('copy');
-    alert("Link copied!");
-};
 document.getElementById('reset-game-btn').onclick = () => {
     if (confirm("End this game and start a new one?")) {
         window.location.href = window.location.pathname;
