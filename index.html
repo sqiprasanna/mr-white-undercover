@@ -107,7 +107,12 @@
         }
 
         .card-large {
-            max-width: 600px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card-xlarge {
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -865,7 +870,7 @@
 
         <!-- VICTORY SCREEN -->
         <div id="victoryScreen" class="screen">
-            <div class="container card-large">
+            <div class="container card-xlarge">
                 <div class="card" style="text-align: center;">
                     <i id="victoryIcon" style="font-size: 5rem; color: var(--accent); margin-bottom: 20px; display: block;"></i>
                     <h1 id="victoryTitle" style="margin-bottom: 10px;">Victory!</h1>
@@ -880,10 +885,10 @@
                     </div>
 
                     <div class="flex gap-10">
-                        <button id="playAgainBtn" class="btn-success btn-primary-lg">
+                        <button id="playAgainBtn" class="btn-success" style="flex: 1; padding: 16px 24px; font-size: 1rem; border-radius: 12px;">
                             <i class="fas fa-redo"></i> Play Again
                         </button>
-                        <button id="viewStatsBtn" class="btn-secondary" style="flex: 1;">
+                        <button id="viewStatsBtn" class="btn-secondary" style="flex: 1; padding: 16px 24px; font-size: 1rem; border-radius: 12px;">
                             <i class="fas fa-chart-bar"></i> Stats
                         </button>
                     </div>
