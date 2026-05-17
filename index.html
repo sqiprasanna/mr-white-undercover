@@ -49,6 +49,17 @@
             background: rgba(71, 85, 105, 0.7);
         }
 
+        .btn-danger {
+            @apply px-4 py-2 rounded-lg font-medium transition-all duration-300;
+            background: rgba(239, 68, 68, 0.7);
+            color: white;
+            border: 1px solid rgba(220, 38, 38, 0.5);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
         .input-field {
             @apply w-full px-4 py-3 rounded-xl bg-slate-800/50 border border-slate-700 text-slate-100 transition-all duration-300;
         }
@@ -122,18 +133,6 @@
             .timer-display { font-size: 2.5rem; letter-spacing: 4px; }
         }
 
-        .stat-card {
-            @apply text-center p-6 rounded-2xl glass;
-        }
-
-        .stat-value {
-            @apply text-3xl font-bold text-emerald-400;
-        }
-
-        .stat-label {
-            @apply text-sm text-slate-400 mt-2;
-        }
-
         .player-badge {
             @apply inline-block px-3 py-1 rounded-lg text-sm font-semibold bg-slate-700/50 text-slate-200 border border-slate-600;
         }
@@ -165,6 +164,18 @@
         .btn-remove {
             @apply text-rose-400 hover:text-rose-300 transition-colors;
         }
+
+        .leaderboard-row {
+            @apply flex items-center justify-between p-4 rounded-lg glass;
+        }
+
+        .leaderboard-name {
+            @apply font-bold text-slate-100;
+        }
+
+        .leaderboard-points {
+            @apply text-2xl font-black text-emerald-400;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -181,6 +192,13 @@
                             UNDERCOVER
                         </h1>
                         <p class="text-slate-400 text-lg">The Secret Word Party Game</p>
+                    </div>
+
+                    <!-- Quick Load Previous Players -->
+                    <div id="quickLoadContainer" class="hidden">
+                        <button id="quickLoadBtn" class="w-full btn-secondary py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                            <i class="fas fa-history"></i> Load Previous Players
+                        </button>
                     </div>
 
                     <!-- Players Setup -->
@@ -200,6 +218,39 @@
                         </div>
 
                         <div class="player-list" id="playersList"></div>
+                    </div>
+
+                    <!-- Timer Configuration -->
+                    <div class="space-y-4">
+                        <label class="text-lg font-bold text-purple-400 flex items-center gap-2">
+                            <i class="fas fa-clock"></i> TIMER SETTINGS
+                        </label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="config-item">
+                                <div class="config-label">
+                                    <span class="text-sm text-slate-300">Clue Time (sec)</span>
+                                    <span class="config-value" id="clueTimeValue">30</span>
+                                </div>
+                                <input id="clueTimeSlider" type="range" min="15" max="60" value="30" step="5">
+                            </div>
+
+                            <div class="config-item">
+                                <div class="config-label">
+                                    <span class="text-sm text-slate-300">Discussion (min)</span>
+                                    <span class="config-value" id="discussionTimeValue">2</span>
+                                </div>
+                                <input id="discussionTimeSlider" type="range" min="1" max="5" value="2">
+                            </div>
+
+                            <div class="config-item">
+                                <div class="config-label">
+                                    <span class="text-sm text-slate-300">Mr. White Guess (sec)</span>
+                                    <span class="config-value" id="whiteGuessTimeValue">20</span>
+                                </div>
+                                <input id="whiteGuessTimeSlider" type="range" min="10" max="30" value="20" step="5">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Auto-Detect Configuration -->
@@ -222,9 +273,6 @@
                                     <span class="config-value" id="undercoversValue">1</span>
                                 </div>
                                 <input id="undercoversSlider" type="range" min="1" max="5" value="1">
-                                <div class="flex justify-between text-xs text-slate-500">
-                                    <span>1</span><span>5</span>
-                                </div>
                             </div>
 
                             <div class="config-item">
@@ -235,21 +283,17 @@
                                     <span class="config-value" id="whitesValue">1</span>
                                 </div>
                                 <input id="whitesSlider" type="range" min="1" max="3" value="1">
-                                <div class="flex justify-between text-xs text-slate-500">
-                                    <span>1</span><span>3</span>
-                                </div>
                             </div>
                         </div>
 
                         <div class="p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 text-sm text-slate-400">
                             <p class="mb-2 font-semibold text-slate-300">
-                                <i class="fas fa-info-circle mr-2 text-cyan-400"></i>Configuration Guide
+                                <i class="fas fa-info-circle mr-2 text-cyan-400"></i>Points System
                             </p>
                             <ul class="space-y-1 text-xs">
-                                <li>• <strong>3-4 players:</strong> 1 Undercover, 1 Mr. White</li>
-                                <li>• <strong>5-8 players:</strong> 2 Undercovers, 1 Mr. White</li>
-                                <li>• <strong>9-12 players:</strong> 2 Undercovers, 2 Mr. Whites</li>
-                                <li>• <strong>13+ players:</strong> 3 Undercovers, 2 Mr. Whites</li>
+                                <li>✓ <strong>Civilians win:</strong> 1 point each</li>
+                                <li>✓ <strong>Undercovers win:</strong> 2 points each</li>
+                                <li>✓ <strong>Mr. White guesses word:</strong> 3 points</li>
                             </ul>
                         </div>
                     </div>
@@ -294,6 +338,28 @@
             </div>
         </div>
 
+        <!-- CLUE GIVING SCREEN -->
+        <div id="clueScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-lg slide-in">
+                <div class="glass rounded-3xl p-8 md:p-10 text-center space-y-6">
+                    <h2 class="text-3xl font-bold">Time to Give a Clue!</h2>
+                    <p id="cluePlayerName" class="text-xl text-emerald-400 font-bold"></p>
+                    <p class="text-slate-400">Describe your word without revealing it</p>
+
+                    <div class="timer-display text-rose-400 neon-glow" id="clueTimerDisplay">0:30</div>
+
+                    <div class="flex gap-3">
+                        <button id="startClueBtn" class="btn-primary flex-1 py-4 rounded-2xl font-bold text-lg">
+                            <i class="fas fa-play mr-2"></i> Start Timer
+                        </button>
+                        <button id="skipClueBtn" class="btn-secondary flex-1 py-4 rounded-2xl font-bold">
+                            <i class="fas fa-forward mr-2"></i> Done
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- GAME DASHBOARD SCREEN -->
         <div id="gameDashboardScreen" class="hidden min-h-screen p-4 md:p-6">
             <div class="max-w-7xl mx-auto space-y-6">
@@ -328,14 +394,6 @@
                                     <i class="fas fa-redo"></i>
                                 </button>
                             </div>
-                            <div class="text-xs text-slate-400 text-center space-y-2">
-                                <p>Custom Time</p>
-                                <div class="flex gap-1 justify-center">
-                                    <input id="timerMinutes" type="number" min="0" max="10" value="2" class="w-12 px-2 py-1 rounded bg-slate-800 border border-slate-700 text-center text-sm">
-                                    <span class="text-slate-500">:</span>
-                                    <input id="timerSeconds" type="number" min="0" max="59" value="00" class="w-12 px-2 py-1 rounded bg-slate-800 border border-slate-700 text-center text-sm">
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -356,17 +414,47 @@
         <!-- VICTORY SCREEN -->
         <div id="victoryScreen" class="hidden min-h-screen flex items-center justify-center p-4">
             <div class="w-full max-w-3xl slide-in">
-                <div class="glass rounded-3xl p-8 md:p-10">
-                    <div class="text-center mb-8 space-y-3">
+                <div class="glass rounded-3xl p-8 md:p-10 space-y-8">
+                    <div class="text-center space-y-3">
                         <i id="victoryIcon" class="fas fa-5x mb-4 block" style="color: #10b981;"></i>
                         <h1 id="victoryTitle" class="text-5xl font-black"></h1>
                         <p id="victorySubtitle" class="text-slate-400 text-xl"></p>
                     </div>
 
-                    <div id="roleRevealsList" class="space-y-3 mb-8 max-h-96 overflow-y-auto bg-slate-800/30 rounded-2xl p-4"></div>
+                    <div id="roleRevealsList" class="space-y-3 max-h-96 overflow-y-auto bg-slate-800/30 rounded-2xl p-4"></div>
 
-                    <button id="playAgainBtn" class="btn-primary w-full py-4 text-xl font-bold rounded-2xl">
-                        <i class="fas fa-redo mr-2"></i> Play Again
+                    <!-- Points Distribution -->
+                    <div class="space-y-3">
+                        <h3 class="text-xl font-bold text-yellow-400 flex items-center">
+                            <i class="fas fa-star mr-2"></i> Points Awarded
+                        </h3>
+                        <div id="pointsDistribution" class="space-y-2"></div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button id="playAgainBtn" class="btn-primary flex-1 py-4 text-lg font-bold rounded-2xl">
+                            <i class="fas fa-redo mr-2"></i> Play Again
+                        </button>
+                        <button id="viewStatsBtn" class="btn-secondary flex-1 py-4 text-lg font-bold rounded-2xl">
+                            <i class="fas fa-chart-bar mr-2"></i> Stats
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS SCREEN -->
+        <div id="statsScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-2xl slide-in">
+                <div class="glass rounded-3xl p-8 md:p-10 space-y-6">
+                    <h1 class="text-4xl font-black text-center bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                        LEADERBOARD
+                    </h1>
+
+                    <div id="leaderboardList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+
+                    <button id="backToGameBtn" class="btn-primary w-full py-4 text-lg font-bold rounded-2xl">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Game
                     </button>
                 </div>
             </div>
@@ -390,11 +478,15 @@
 
         <!-- MR WHITE GUESS MODAL -->
         <div id="whiteGuessModal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50">
-            <div class="glass rounded-2xl p-8 max-w-sm w-full slide-in">
-                <h3 class="text-2xl font-bold mb-2">Mr. White Exposed!</h3>
-                <p id="whitePlayerName" class="text-lg text-rose-400 font-semibold mb-6"></p>
-                <p class="text-slate-400 mb-6 font-medium">What's the Civilian word?</p>
-                <input id="whiteGuessInput" type="text" class="input-field mb-4 text-center font-bold" placeholder="Your guess..." autocomplete="off">
+            <div class="glass rounded-2xl p-8 max-w-sm w-full slide-in space-y-4">
+                <h3 class="text-2xl font-bold">Mr. White Exposed!</h3>
+                <p id="whitePlayerName" class="text-lg text-rose-400 font-semibold"></p>
+                <p class="text-slate-400 mb-2">Time to guess the word!</p>
+
+                <div class="timer-display text-cyan-400 neon-glow text-center text-3xl" id="whiteGuessTimerDisplay">0:20</div>
+
+                <input id="whiteGuessInput" type="text" class="input-field text-center font-bold" placeholder="Your guess..." autocomplete="off">
+
                 <div class="flex gap-3">
                     <button id="submitWhiteGuessBtn" class="btn-primary flex-1 py-3 rounded-xl font-bold">
                         <i class="fas fa-check mr-1"></i> Submit
@@ -458,6 +550,9 @@
             currentScreen: 'setup',
             undercoversCount: 1,
             whitesCount: 1,
+            clueTime: 30,
+            discussionTime: 120,
+            whiteGuessTime: 20,
             gameStarted: false,
             currentRevealIndex: 0,
             alivePlayerIndices: [],
@@ -468,14 +563,17 @@
             timerRunning: false,
             timerSeconds: 120,
             selectedWordPair: null,
-            playerRoles: {}
+            playerRoles: {},
+            playerPoints: {}
         };
 
         const screens = {
             setup: 'setupScreen',
             roleReveal: 'roleRevealScreen',
+            clue: 'clueScreen',
             gameDashboard: 'gameDashboardScreen',
-            victory: 'victoryScreen'
+            victory: 'victoryScreen',
+            stats: 'statsScreen'
         };
 
         function getAutoConfig(playerCount) {
@@ -483,6 +581,24 @@
             if (playerCount <= 8) return { undercovers: 2, whites: 1 };
             if (playerCount <= 12) return { undercovers: 2, whites: 2 };
             return { undercovers: 3, whites: 2 };
+        }
+
+        function loadPlayerNames() {
+            const saved = localStorage.getItem('undercover_players');
+            return saved ? JSON.parse(saved) : null;
+        }
+
+        function savePlayerNames(players) {
+            localStorage.setItem('undercover_players', JSON.stringify(players));
+        }
+
+        function loadPlayerPoints() {
+            const saved = localStorage.getItem('undercover_points');
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        function savePlayerPoints(points) {
+            localStorage.setItem('undercover_points', JSON.stringify(points));
         }
 
         function hideAllScreens() {
@@ -552,6 +668,9 @@
         function startGame() {
             if (gameState.players.length < 3) return;
 
+            savePlayerNames(gameState.players);
+            gameState.playerPoints = loadPlayerPoints();
+
             gameState.alivePlayerIndices = Array.from({ length: gameState.players.length }, (_, i) => i);
             gameState.selectedWordPair = WORD_PAIRS[Math.floor(Math.random() * WORD_PAIRS.length)];
 
@@ -619,7 +738,7 @@
             const shuffledIndices = [...gameState.alivePlayerIndices].sort(() => Math.random() - 0.5);
             gameState.turnOrder = shuffledIndices;
             gameState.currentTurnIndex = 0;
-            gameState.timerSeconds = 120;
+            gameState.timerSeconds = gameState.discussionTime;
             gameState.timerRunning = false;
             renderGameDashboard();
             showScreen('gameDashboard');
@@ -640,9 +759,18 @@
                     <div class="flex items-center gap-2 p-3 rounded-lg ${isCurrentTurn ? 'bg-emerald-900/50 border border-emerald-500' : 'glass'}">
                         <span class="text-xs font-bold text-slate-400 w-6">${order + 1}</span>
                         <span class="text-sm ${isCurrentTurn ? 'text-emerald-300 font-bold' : 'text-slate-300'}">${player}</span>
+                        ${isCurrentTurn ? '<button class="ml-auto btn-secondary px-3 py-1 text-xs" onclick="showClueScreen()"><i class="fas fa-microphone"></i> Give Clue</button>' : ''}
                     </div>
                 `;
             }).join('');
+        }
+
+        function showClueScreen() {
+            const currentPlayer = gameState.players[gameState.turnOrder[gameState.currentTurnIndex]];
+            document.getElementById('cluePlayerName').textContent = currentPlayer;
+            document.getElementById('clueTimerDisplay').textContent = `0:${gameState.clueTime.toString().padStart(2, '0')}`;
+            document.getElementById('clueTimerDisplay').textContent = gameState.clueTime < 10 ? `0:0${gameState.clueTime}` : `0:${gameState.clueTime}`;
+            showScreen('clue');
         }
 
         function renderAlivePlayers() {
@@ -688,8 +816,22 @@
         function showWhiteGuessModal(playerIdx) {
             document.getElementById('whitePlayerName').textContent = gameState.players[playerIdx];
             document.getElementById('whiteGuessInput').value = '';
+            document.getElementById('whiteGuessTimerDisplay').textContent = gameState.whiteGuessTime < 10 ? `0:0${gameState.whiteGuessTime}` : `0:${gameState.whiteGuessTime}`;
+
+            let whiteGuessTimer = gameState.whiteGuessTime;
+            const whiteInterval = setInterval(() => {
+                whiteGuessTimer--;
+                document.getElementById('whiteGuessTimerDisplay').textContent = whiteGuessTimer < 10 ? `0:0${whiteGuessTimer}` : `0:${whiteGuessTimer}`;
+                if (whiteGuessTimer <= 0) {
+                    clearInterval(whiteInterval);
+                    document.getElementById('whiteGuessModal').classList.add('hidden');
+                    checkGameEnd();
+                    if (!gameState.gameEnded) renderGameDashboard();
+                }
+            }, 1000);
 
             document.getElementById('submitWhiteGuessBtn').onclick = () => {
+                clearInterval(whiteInterval);
                 const guess = document.getElementById('whiteGuessInput').value.trim().toLowerCase();
                 const correctWord = gameState.selectedWordPair.civilian.toLowerCase();
                 document.getElementById('whiteGuessModal').classList.add('hidden');
@@ -703,6 +845,7 @@
             };
 
             document.getElementById('skipWhiteGuessBtn').onclick = () => {
+                clearInterval(whiteInterval);
                 document.getElementById('whiteGuessModal').classList.add('hidden');
                 checkGameEnd();
                 if (!gameState.gameEnded) renderGameDashboard();
@@ -726,9 +869,28 @@
             }
         }
 
+        function awardPoints(winningRole) {
+            gameState.players.forEach((player, idx) => {
+                if (!gameState.playerPoints[player]) gameState.playerPoints[player] = 0;
+
+                const role = gameState.playerRoles[player];
+                const isAlive = !gameState.eliminatedPlayers.has(idx);
+
+                if (role === ROLES.CIVILIAN && winningRole === ROLES.CIVILIAN) {
+                    gameState.playerPoints[player] += 1;
+                } else if (role === ROLES.UNDERCOVER && winningRole === ROLES.UNDERCOVER) {
+                    gameState.playerPoints[player] += 2;
+                } else if (role === ROLES.WHITE && winningRole === ROLES.WHITE) {
+                    gameState.playerPoints[player] += 3;
+                }
+            });
+            savePlayerPoints(gameState.playerPoints);
+        }
+
         function endGame(winningRole) {
             gameState.gameEnded = true;
             gameState.timerRunning = false;
+            awardPoints(winningRole);
             showVictoryScreen(winningRole);
         }
 
@@ -787,7 +949,41 @@
                 `;
             }).join('');
 
+            const pointsList = document.getElementById('pointsDistribution');
+            let pointsHTML = '';
+            gameState.players.forEach(player => {
+                const role = gameState.playerRoles[player];
+                const earned = (role === ROLES.CIVILIAN && winningRole === ROLES.CIVILIAN) ? 1 :
+                               (role === ROLES.UNDERCOVER && winningRole === ROLES.UNDERCOVER) ? 2 :
+                               (role === ROLES.WHITE && winningRole === ROLES.WHITE) ? 3 : 0;
+
+                if (earned > 0) {
+                    pointsHTML += `
+                        <div class="flex items-center justify-between p-3 rounded-lg bg-slate-700/30">
+                            <span class="font-bold text-slate-100">${player}</span>
+                            <span class="text-2xl font-black text-yellow-400">+${earned} <i class="fas fa-star"></i></span>
+                        </div>
+                    `;
+                }
+            });
+            pointsList.innerHTML = pointsHTML;
+
             showScreen('victory');
+        }
+
+        function showLeaderboard() {
+            const list = document.getElementById('leaderboardList');
+            const sorted = Object.entries(gameState.playerPoints).sort((a, b) => b[1] - a[1]);
+            list.innerHTML = sorted.map(([player, points], idx) => `
+                <div class="leaderboard-row">
+                    <span class="text-lg">
+                        ${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '•'}
+                        <span class="ml-2 font-bold">${player}</span>
+                    </span>
+                    <span class="leaderboard-points">${points}</span>
+                </div>
+            `).join('');
+            showScreen('stats');
         }
 
         function updateTimerDisplay() {
@@ -821,9 +1017,7 @@
 
         function resetTimer() {
             gameState.timerRunning = false;
-            const mins = parseInt(document.getElementById('timerMinutes').value) || 2;
-            const secs = parseInt(document.getElementById('timerSeconds').value) || 0;
-            gameState.timerSeconds = mins * 60 + secs;
+            gameState.timerSeconds = gameState.discussionTime;
             document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
             updateTimerDisplay();
         }
@@ -834,6 +1028,9 @@
                 currentScreen: 'setup',
                 undercoversCount: gameState.undercoversCount,
                 whitesCount: gameState.whitesCount,
+                clueTime: gameState.clueTime,
+                discussionTime: gameState.discussionTime,
+                whiteGuessTime: gameState.whiteGuessTime,
                 gameStarted: false,
                 currentRevealIndex: 0,
                 alivePlayerIndices: [],
@@ -842,17 +1039,48 @@
                 eliminatedPlayers: new Set(),
                 gameEnded: false,
                 timerRunning: false,
-                timerSeconds: 120,
+                timerSeconds: gameState.discussionTime,
                 selectedWordPair: null,
-                playerRoles: {}
+                playerRoles: {},
+                playerPoints: gameState.playerPoints
             };
             updateAutoConfig();
             showScreen('setup');
         }
 
+        // Initialize quick load
+        window.addEventListener('load', () => {
+            const saved = loadPlayerNames();
+            if (saved) {
+                document.getElementById('quickLoadContainer').classList.remove('hidden');
+                document.getElementById('quickLoadBtn').addEventListener('click', () => {
+                    gameState.players = saved;
+                    renderPlayersList();
+                    updateAutoConfig();
+                    document.getElementById('playerInput').focus();
+                });
+            }
+        });
+
+        // Event listeners
         document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
         document.getElementById('playerInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') addPlayer();
+        });
+
+        document.getElementById('clueTimeSlider').addEventListener('change', e => {
+            gameState.clueTime = parseInt(e.target.value);
+            document.getElementById('clueTimeValue').textContent = gameState.clueTime;
+        });
+
+        document.getElementById('discussionTimeSlider').addEventListener('change', e => {
+            gameState.discussionTime = parseInt(e.target.value) * 60;
+            document.getElementById('discussionTimeValue').textContent = parseInt(e.target.value);
+        });
+
+        document.getElementById('whiteGuessTimeSlider').addEventListener('change', e => {
+            gameState.whiteGuessTime = parseInt(e.target.value);
+            document.getElementById('whiteGuessTimeValue').textContent = gameState.whiteGuessTime;
         });
 
         document.getElementById('undercoversSlider').addEventListener('change', e => {
@@ -870,9 +1098,31 @@
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('tapToRevealBtn').addEventListener('click', revealCard);
         document.getElementById('confirmRevealBtn').addEventListener('click', nextPlayerReveal);
+
+        document.getElementById('startClueBtn').addEventListener('click', () => {
+            let clueTimer = gameState.clueTime;
+            const clueInterval = setInterval(() => {
+                clueTimer--;
+                document.getElementById('clueTimerDisplay').textContent = clueTimer < 10 ? `0:0${clueTimer}` : `0:${clueTimer}`;
+                if (clueTimer <= 0) {
+                    clearInterval(clueInterval);
+                }
+            }, 1000);
+        });
+
+        document.getElementById('skipClueBtn').addEventListener('click', () => {
+            renderGameDashboard();
+            showScreen('gameDashboard');
+        });
+
         document.getElementById('playPauseBtn').addEventListener('click', toggleTimer);
         document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
+
         document.getElementById('playAgainBtn').addEventListener('click', playAgain);
+        document.getElementById('viewStatsBtn').addEventListener('click', showLeaderboard);
+        document.getElementById('backToGameBtn').addEventListener('click', () => {
+            showScreen('victory');
+        });
 
         showScreen('setup');
     </script>
