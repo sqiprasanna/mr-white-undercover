@@ -835,6 +835,9 @@
                     <div class="card">
                         <h3><i class="fas fa-list"></i> Turn Order</h3>
                         <div id="turnOrderList" style="display: grid; gap: 10px;"></div>
+                        <button id="nextClueBtn" class="btn-primary btn-primary-lg mt-30" style="width: 100%;">
+                            <i class="fas fa-microphone"></i> Next Clue
+                        </button>
                     </div>
 
                     <!-- Timer -->
@@ -1200,14 +1203,22 @@
                 if (!isAlive) return '';
 
                 return `
-                    <div style="background: ${hasGivenClue ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 212, 255, 0.1)'}; border: 2px solid ${hasGivenClue ? 'var(--accent)' : 'rgba(0, 212, 255, 0.3)'}; padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: ${hasGivenClue ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 212, 255, 0.1)'}; border: 2px solid ${hasGivenClue ? 'var(--accent)' : 'rgba(0, 212, 255, 0.3)'}; padding: 12px; border-radius: 10px;">
                         <span style="color: ${hasGivenClue ? 'var(--accent)' : 'var(--text-primary)'}; font-weight: 700;">
-                            ${hasGivenClue ? '<i class="fas fa-check"></i>' : '#' + (order + 1)} - ${player}
+                            ${hasGivenClue ? '<i class="fas fa-check"></i>' : '<i class="fas fa-circle-notch"></i>'} - ${player}
                         </span>
-                        ${!hasGivenClue ? `<button onclick="showClueScreen(${idx})" class="btn-secondary" style="padding: 8px 12px; font-size: 0.85rem;"><i class="fas fa-microphone"></i> Clue</button>` : ''}
                     </div>
                 `;
             }).join('');
+        }
+
+        function getNextCluGiver() {
+            for (let idx of gameState.turnOrder) {
+                if (!gameState.eliminatedPlayers.has(idx) && !gameState.clueLessGiversThisRound.has(idx)) {
+                    return idx;
+                }
+            }
+            return null;
         }
 
         function showClueScreen(playerIdx) {
@@ -1616,6 +1627,15 @@
         document.getElementById('playAgainBtn').addEventListener('click', playAgain);
         document.getElementById('viewStatsBtn').addEventListener('click', showLeaderboard);
         document.getElementById('backToGameBtn').addEventListener('click', () => showScreen('victoryScreen'));
+
+        document.getElementById('nextClueBtn').addEventListener('click', () => {
+            const nextPlayerIdx = getNextCluGiver();
+            if (nextPlayerIdx !== null) {
+                showClueScreen(nextPlayerIdx);
+            } else {
+                alert('All players have given their clue!');
+            }
+        });
     </script>
 </body>
 </html>
